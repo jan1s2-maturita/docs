@@ -1,3 +1,6 @@
+> :warning: LaTeX dokumentace je ve vývoji
+
+
 # Dokumentace
 Tento ročníkový projekt si klade za úkol umožnit studentům zapínat kyberbezpečnostní úkoly formátu CTF na školní infrastruktuře pomocí systému Kubernetes.
 
