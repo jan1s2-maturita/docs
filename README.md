@@ -42,6 +42,8 @@ Všechny mikroslužby jsou napsány v Pythonu s využitím FastAPI a mají endpo
 ### Router
 Tato mikroslužba je hlavní router pro FastAPI, který směruje požadavky na jednotlivé mikroslužby.
 
+Tato služba zároveň zajišťuje přesun cookie s JWT tokenem (cookie token) do hlavičky požadavku (X-Token), aby backend api nemusel pracovat s cookies.
+
 ### Auth
 Tato mikroslužba zajišťuje přihlašování a registraci a jakožto jediná má přístup k privátnímu klíči pro podepisování JWT tokenů pomocí algoritmu RS256.
 
