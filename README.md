@@ -1,4 +1,4 @@
-> :warning: LaTeX dokumentace nalezitelná v podadresáři `docs/` je ve vývoji, **není** kompletní a v současné době (tj. 23. 12. 2024) by neměl být považován za oficiální dokumentaci tohoto projektu, ale pouze jakožto náčrt konečné dokumentace.
+> :warning: LaTeX dokumentace nalezitelná v podadresářích `src/` a `build/` je ve vývoji, **není** kompletní a v současné době (tj. 23. 12. 2024) by neměl být považován za oficiální dokumentaci tohoto projektu, ale pouze jakožto náčrt konečné dokumentace.
 
 
 # Dokumentace
