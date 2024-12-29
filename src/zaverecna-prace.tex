@@ -453,11 +453,23 @@ Tato služba má dva API endpointy:
 kde endpoint \texttt{/\{flag\_id\}} vyžaduje v těle požadavku string \texttt{flag} a token uživatele.
 
 \chapter{Frontend}
-Frontend je napsaný pomocí Vite React templatu a umožňuje uživatelům interagovat s jedntlivými částmi API.
+Frontend část tohoto projektu je napsána v Reactu a jakožto nástroje je využíván projekt Vite. Samotná stránka funguje na bázi CSR (Client Side Rendering) a komunikuje s API popsáným v předchozí kapitole. Díky tomuto je tato stránka zároveň kódově oddělená od backendové části a může být nasazena na jiném serveru než backend a může být psána v jiném jazyce než backendová část. Frontend je napsán v JavaScriptu díky jeho jednoduchosti a rychlosti vývoje.
+
+První stránka, kterou člověk vidí, je přihlašovací formulář a navigační lišta. Po přihlášení se zobrazí stránka s úlohami, které může uživatel zapínat a vypínat. Dále je zde možnost zobrazit si informace o právě běžících úlohách a o všech dostupných úlohách.
+
+Využití Reactu umožňuje stránce být tzv. SPA (Single Page Application) a tím pádem se nemusí stránka znovu načítat při každém přechodu mezi stránkami, což zvyšuje rychlost a plynulost stránky. Zároveň díky tomuto přístupu může webový server frontendu pouze posílat statické soubory a nemusí se starat o žádnou logiku, což zvyšuje bezpečnost a snižuje nároky na server.
 
 \chapter{Administrátorská Sekce}
-Sekce pro správce ještě není vytvořená, ale bude umožňovat administrátorovi přidávat nové úlohy nahráváním Kubernetes manifestů a umožní správci sledovat stav uživatelské části stránky (např. počet zapnutých úkolů).
-	
+Sekce pro správce v tuto chvíli obsahuje tři části - vytváření nových úloh, vytváření vlajek, aktualizace uživatelů. Prostředí v administrátorské sekci je děláno tak, aby bylo intuitivní a nebyl problém s tímhle prostředím pracovat. 
+
+Vytváření nových úloh je děláno tak, že je nutné zadat pouze název úlohy, image úlohy a kategorii úlohy - veškeré ostatní části JSON manifestu úlohy jsou generovány na straně serveru automaticky, čímž se minimalizuje prostor na bezpečnostní chyby - není potřeba kontrolovat validitu odevzdaného JSON souboru, ale pouze těchto tří částí. 
+
+Vytváření vlajek pouze požaduje identifikační číslo ulohy, ke které se vlajka váže, a vlajku samotnou.
+
+Aktualizace uživatelů umožňuje změnit uživateli práva nebo změnit heslo uživatele.
+
+Pro bezpečnost této části je využíváno parametru "admin" u JWT tokenu, který je vytvořen při přihlášení uživatele s právy administrátora. Díky tomuto je možné jednoduše ověřit, zda je uživatel oprávněn k použití této části vzhledem k tomu, že s JSON web tokeny nelze manipulovat bez privátního klíče.
+
 	\chapter*{Závěr}
 
 	Cílem práce je webová aplikace a REST API pro práci s CTF systémem postaveným na platformě Kubernetes.
