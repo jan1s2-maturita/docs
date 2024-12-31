@@ -470,6 +470,15 @@ Aktualizace uživatelů umožňuje změnit uživateli práva nebo změnit heslo 
 
 Pro bezpečnost této části je využíváno parametru "admin" u JWT tokenu, který je vytvořen při přihlášení uživatele s právy administrátora. Díky tomuto je možné jednoduše ověřit, zda je uživatel oprávněn k použití této části vzhledem k tomu, že s JSON web tokeny nelze manipulovat bez privátního klíče.
 
+\chapter{Access Box}
+Jakožto přístup k samotným úlohám je uživateli standardně poskytnut na žádost tzv. Access box, což je kontejner s image kalilinux/kali-last-release, který se nachází ve stejném namespace a tudíž ve stejné síti jakožto úlohy uživatele. 
+
+Toto řešení má oproti řešení pomocí VPN výhodu v tom, že není nutno instalovat žádný software na straně uživatele a není nutno vytvářet certifikáty, popř. uživatele, tudíž je mnohem jednodušší na implementaci a jednodušší na škálování jelikož lze tento kontejner spustit na každém nodu v Kubernetes clusteru.
+
+Použití Kali Linuxu je z důvodu, že je to jedna z nejznámějších distribucí pro pentesting a je také jedna z nejvíce používaných distribucí pro tento účel, což umožňuje uživateli si toto prostředí vyzkoušet.
+
+Ke kontejneru lze přistoupit z webového prostředí, kde lze vidět terminál realizovaný pomocí REST API.
+
 	\chapter*{Závěr}
 
 	Cílem práce je webová aplikace a REST API pro práci s CTF systémem postaveným na platformě Kubernetes.
