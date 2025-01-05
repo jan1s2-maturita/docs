@@ -4,8 +4,8 @@
 % Tato šablona byla vytvořena tak, aby pomocí ní mohli v systému LaTeX soutěžící sázet své práce a zároveň odpovídala požadavkům na formátování vyplývajícím z wordové šablony umístěné na webu soc.cz.
 %
 \documentclass[12pt, a4paper,
-%oneside,      %% -- odkomentujte, pokud chcete svou práci mít pouze jednostrannou, mezera pro hřbet pak automaticky bude pouze na levé straně
-twoside,        %% -- pro oboustranné práce, mezera pro hřbet následně střídá strany.
+oneside,      %% -- odkomentujte, pokud chcete svou práci mít pouze jednostrannou, mezera pro hřbet pak automaticky bude pouze na levé straně
+%twoside,        %% -- pro oboustranné práce, mezera pro hřbet následně střídá strany.
 openright
 ]{report}
 
@@ -20,7 +20,7 @@ openright
 \newcommand\trida{IT4} %% vyplň jméno svého konzultanta
 \newcommand\jmenoAutora{Jan Stránský}  %% vyplň své jméno
 \newcommand\skolniRok{2024/25} %% vyplň rok
-\newcommand\datumOdevzdani{1. 1. 2025} %% vyplň rok
+\newcommand\datumOdevzdani{6. 1. 2025} %% vyplň rok
 \newcommand\nazevPrace{CTF systém v Kubernetes} %% vyplň název své práce
 
 \title{\nazevPrace} %% -- Název tvé práce
@@ -249,10 +249,10 @@ openright
 			\end{center}  
 		}%%%
 		
-		\begin{figure}[h]
-			\centering
-			\includegraphics[width=0.8\linewidth]{image/programovani-02.jpg} 
-		\end{figure}
+		%\begin{figure}[h]
+			%\centering
+			%\includegraphics[width=0.8\linewidth]{image/programovani-02.jpg} 
+		%\end{figure}
 		
 		\vspace{0.02 \textheight}
 		\begin{table}[h!]
@@ -320,15 +320,14 @@ openright
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%	
 	\noindent{\Large{\bfseries{Abstract}}}
 	
-	\noindent 
+	\noindent The result of this project is a functional system for running and creating CTF type tasks in the Kubernetes system running on the school network with a sufficient level of security. The application includes user registration and login, turning on new tasks and then turning them off. The main part of this project is communication with the Kubernetes system, which is used in highly scalable production environments. The user can communicate with the application through the provided web interface, but can also communicate directly with the provided API. Furthermore, this project aims to allow students to better familiarize themselves with certain IT options through a game (CTF) like services TryHackMe or HackTheBox do.
 
 	
 	\vspace{18pt}
 	
 	\noindent{\large{\bfseries{Keywords}}}
 	
-	\noindent Template, \LaTeX, High school proffessional activity, \dots 
-	
+	\noindent CTF, Kubernetes, FastAPI, web application	
 	\clearpage %% Zalomení stránky
 
 %% Stránka s generovaným obsahem
@@ -364,13 +363,105 @@ Zvláštní zaměření bylo na backendovou část API a na zabezpečení celéh
 %* předem definované cíle práce, 
 %* motivaci pro další čtení textu včetně stručného uvedení obsahu následujících kapitol 
 
+\chapter{Využité technologie}
 
-\chapter{Backend mikroslužby}
+\section{Backend}
+
+\subsection{Kubernetes}
+Tento projekt využíval na zprovoznění a správu samotných úloh Kubernetes. Kubernetes je open-source platforma pro orchestraci kontejnerů, která umožňuje automatizovat nasazování, škálování a správu aplikací běžících v kontejnerech. 
+
+Tato platforma má zároveň plnohodnotnou REST API a oficiální knihovnu pro jazyk Python, což např. systém Docker standardně neobsahuje. Zároveň má možnost vzdálené správy, díky čemuž se daly samotné mikroslužby jednoduše restartovat a aktualizovat bez nutnosti přímého přístupu na server pomocí SSH nebo webového rozhraní (např. Portainer). Toto mi později pomohlo při debugování a vývoji.
+
+Tento systém se dá v případě potřeby škálovat a to jak na lokálních serverech, tak také na cloudu v případě, že by bylo potřeba zvýšit výkon nebo dostupnost systému.
+
+Abych nemusel vytvářet nový systém, tak jsem se rozhodl využít Kubernetes, který běží na školní síti a je dostupný pro všechny studenty.
+
+\subsubsection{vCluster}
+Vzhledem k požadavku, aby byl systém spustitelný na školní instanci Kubernetes, jsem se rozhodl využít Kubernetes vcluster, který je dostupný pro všechny studenty a zároveň je možné vytvářet nové namespace a pody, čímž se dají mnohem jednodušeji zařizovat případná práva přes RBAC systém ke kterému žáci standardně přístup nemají.
+
+VCluster je program, který umožňuje vytvářet virtuální clustery na již běžícím Kubernetes clusteru, čímž umožňuje získat uživateli "zvýšená" práva oproti standardnímu clusteru. Tento program mi umožnil vytvořit vlastní cluster, který byl dostupný pouze mně a zároveň mi umožnil vytvářet nové namespace a pody, což bylo důležité pro zajištění bezpečnosti a izolace jednotlivých úloh.
+
+\subsection{FastAPI}
+FastAPI je moderní webový framework napsaný v jazyce Python, který je založen na standardu ASGI (Asynchronous Server Gateway Interface). Tento framework je velmi rychlý a zároveň je velmi jednoduchý na použití a má velmi dobrou dokumentaci. Díky tomu jsem se rozhodl použít tento framework pro vytvoření API části tohoto projektu.
+
+Tento framework mi jednoduše umožnil psát API backend v jazyce Python a zároveň mi umožnil využívat asynchronní programování, což bylo důležité pro rychlou odezvu API.
+
+Zároveň mi tento framework velmi zjednodušil zajištění čitelnosti kódu díky vynucenému využití typování a automatickému generování dokumentace.
+
+\subsection{SQLAlchemy}
+SQLAlchemy je knihovna pro jazyk Python, která umožňuje komunikaci s relačními databázemi pomocí SQL. Tato knihovna mi umožnila vytvořit ORM (Object-Relational Mapping) pro databázi PostgreSQL, díky čemuž jsem mohl jednoduše vytvářet a upravovat databázové tabulky pomocí Pythonu bez nutnosti psát SQL dotazy a kontrolovat bezpečnost uživatelských vstupů.
+
+\subsection{Redis}
+Na uchování již nastartovaných úloh jsem použil databázi Redis. Redis je open-source in-memory databáze, která je používána pro ukládání klíč-hodnota párů. Tato databáze mi umožnila ukládat informace o běžících úlohách a zároveň mi umožnila jednoduše získávat informace o těchto úlohách.
+
+Redis se standardně využívá např. na ukládání cache, ale v tomto projektu jsem ho využil na ukládání informací o běžících úlohách, jelikož je velmi rychlý a jednoduchý na použití.
+
+\subsection{Databáze}
+Jakožto databázi jsem zvolil PostgreSQL, která je open-source relační databáze. Tato databáze mi umožnila ukládat informace o uživatelích, úlohách a dalších informacích, které byly potřeba pro správné fungování tohoto projektu. 
+
+Tuto databázi jsem zvolil z důvodu, že je velmi rychlá, je velmi dobře podporována knihovnou SQLAlchemy a je vhodná pro produkční nasazení.
+
+\subsection{JWT}
+Na autentizaci jsem použil JWT (JSON Web Token), který mi umožnil vytvářet a ověřovat tokeny, které byly použity pro ověření uživatele v ostatních částech systému. Tento token byl podepsán pomocí privátního klíče (algoritmus RSA) a ověřován pomocí veřejného klíče. Tyto tokeny byly ukládány do cookie a zároveň byly přenášeny v hlavičce požadavku.
+
+Tento algoritmus mi umožnil zajištění bezpečnosti uživatelů a zároveň mi umožnil jednoduché ověřování uživatelů v ostatních částech systému díky jeho bezestavové povaze.
+
+Samotné klíče jsem ukládal do Kubernetes Secret, což mi umožnilo jednoduše měnit klíče na jednom místě bez nutnosti změn v samotných aplikacích.
+
+\subsection{Přístup k systémům}
+Kvůli nastazení jsem se rozhodl pro připojování k databázím a ke Kubernetesu používat na míru vytvořené třídy, které mi umožnily připojit se k těmto systémům a využívat funkce pro komunikaci s nimi bez nutnosti se obtěžovat s vytvářením nových připojení a zároveň mi umožnilo jednoduše měnit přístupové údaje k těmto systémům.
+
+\begin{lstlisting}[style=Python, caption=Ukázka třídy pro připojení ke Kubernetes]
+from kubernetes import client, config
+from kubernetes.utils import create_from_dict
+
+class Kubernetes:
+    def __init__(self, key, url):
+        self.configuration = client.Configuration()
+        self.configuration.api_key['authorization'] = key
+        self.configuration.api_key_prefix['authorization'] = 'Bearer'
+        self.configuration.host = url
+        self.configuration.verify_ssl = False
+        self.client = client.ApiClient(self.configuration)
+        self.v1 = client.CoreV1Api(self.client)
+    def get_k8s_config(self):
+        return self.v1
+    def create_namespace(self, name: str):
+        body = client.V1Namespace(metadata=client.V1ObjectMeta(name=name))
+        return self.v1.create_namespace(body)
+
+    def namespace_exists(self, name: str):
+        namespaces = self.v1.list_namespace()
+        for ns in namespaces.items:
+            if ns.metadata.name == name:
+                return True
+        return False
+	...
+\end{lstlisting}
+
+\section{Frontend}
+\subsection{React}
+Na frontend jsem využil toolkit Vite a knihovnu React. React je knihovna pro tvorbu uživatelských rozhraní, která je vyvíjena a udržována společností Facebook. Tato knihovna mi umožnila vytvořit jednoduché a rychlé webové rozhraní, které bylo zároveň jednoduché na údržbu a rozšíření.
+
+Využití Reactu mi umožnilo zajištění rychlé odezvy a zároveň jednoduchého vytváření komponent, což mi zjednodušilo vytváření webového rozhraní vzhledem k tomu, že frontend nebyl primární částí tohoto projektu.
+
+Na kód jsem využil JavaScript jelikož jsem s ním již měl zkušenosti, které jsem postrádal u TypeScriptu.
+
+\section{Ostatní části}
+\subsection{Git submodules}
+Pro sdílení modelů mezi mikroslužbami jsem využil Git Submodules, které mi umožnily sdílet kód mezi jednotlivými mikroslužbami a zároveň mi umožnily jednoduše aktualizovat kód v jednotlivých mikroslužbách bez nutnosti hlídat aktuálnost zkopírovaného kódu.
+
+Toto mi navíc umožnilo jednoduše sdílet kód mezi jednotlivými částmi systému a zároveň mi umožnilo jednoduše měnit kód v jednotlivých částech systému.
+
+
+\chapter{Řešení backendu - mikroslužby}
 
 \section{Úvod}
 \label{sec:uvod}
 
 V této kapitole se seznámíme s tím, co mikroslužby jsou a s jednotlivými mikroslužbami použitými v API částí tohoto projektu. Všechny tyto mikroslužby jsou napsány v jazyce Python s použitím 
+
+Na autentizace byly použity JWT tokeny, které byly podepsány pomocí privátního klíče (algoritmus RSA) a ověřovány pomocí veřejného klíče. Tyto tokeny byly ukládány do cookie a zároveň byly přenášeny v hlavičce požadavku.
 
 Tyto mikroslužby jsou:
 \begin{itemize}
@@ -459,7 +550,7 @@ První stránka, kterou člověk vidí, je přihlašovací formulář a navigač
 
 Využití Reactu umožňuje stránce být tzv. SPA (Single Page Application) a tím pádem se nemusí stránka znovu načítat při každém přechodu mezi stránkami, což zvyšuje rychlost a plynulost stránky. Zároveň díky tomuto přístupu může webový server frontendu pouze posílat statické soubory a nemusí se starat o žádnou logiku, což zvyšuje bezpečnost a snižuje nároky na server.
 
-\chapter{Administrátorská Sekce}
+\section{Administrátorská sekce}
 Sekce pro správce v tuto chvíli obsahuje tři části - vytváření nových úloh, vytváření vlajek, aktualizace uživatelů. Prostředí v administrátorské sekci je děláno tak, aby bylo intuitivní a nebyl problém s tímhle prostředím pracovat. 
 
 Vytváření nových úloh je děláno tak, že je nutné zadat pouze název úlohy, image úlohy a kategorii úlohy - veškeré ostatní části JSON manifestu úlohy jsou generovány na straně serveru automaticky, čímž se minimalizuje prostor na bezpečnostní chyby - není potřeba kontrolovat validitu odevzdaného JSON souboru, ale pouze těchto tří částí. 
@@ -470,7 +561,7 @@ Aktualizace uživatelů umožňuje změnit uživateli práva nebo změnit heslo 
 
 Pro bezpečnost této části je využíváno parametru "admin" u JWT tokenu, který je vytvořen při přihlášení uživatele s právy administrátora. Díky tomuto je možné jednoduše ověřit, zda je uživatel oprávněn k použití této části vzhledem k tomu, že s JSON web tokeny nelze manipulovat bez privátního klíče.
 
-\chapter{Access Box}
+\section{Access box}
 Jakožto přístup k samotným úlohám je uživateli standardně poskytnut na žádost tzv. Access box, což je kontejner s image kalilinux/kali-last-release, který se nachází ve stejném namespace a tudíž ve stejné síti jakožto úlohy uživatele. 
 
 Toto řešení má oproti řešení pomocí VPN výhodu v tom, že není nutno instalovat žádný software na straně uživatele a není nutno vytvářet certifikáty, popř. uživatele, tudíž je mnohem jednodušší na implementaci a jednodušší na škálování jelikož lze tento kontejner spustit na každém nodu v Kubernetes clusteru.
@@ -478,14 +569,22 @@ Toto řešení má oproti řešení pomocí VPN výhodu v tom, že není nutno i
 Použití Kali Linuxu je z důvodu, že je to jedna z nejznámějších distribucí pro pentesting a je také jedna z nejvíce používaných distribucí pro tento účel, což umožňuje uživateli si toto prostředí vyzkoušet.
 
 Ke kontejneru lze přistoupit z webového prostředí, kde lze vidět terminál realizovaný pomocí REST API.
+\begin{itemize}
+	\item POST /exec
+	\item POST /create
+	\item GET /logs
+	\item GET /health
+\end{itemize}
+kde první endpoint slouží k odeslání příkazu do kontejneru, druhý k vytvoření nového kontejneru, třetí k získání logů z kontejneru a čtvrtý k zjištění stavu služby.
 
-	\chapter*{Závěr}
 
-	Cílem práce je webová aplikace a REST API pro práci s CTF systémem postaveným na platformě Kubernetes.
+	\chapter{Závěr}
 
-	Aplikace je zálohavaná na GitHubu na adrese https://github.com/jan1s2-maturita
-	
+	Celkově bych řekl, že se mi podařilo splnit veškeré cíle, které jsem si stanovil na začátku tohoto projektu. Vytvořil jsem funkční systém pro vytváření a správu úloh CTF typu v systému Kubernetes, který je dostupný na školní síti a je dostatečně zabezpečený. Zároveň jsem se naučil pracovat s mikroslužbami a s prostředím Kubernetes, což byly mé hlavní cíle tohoto projektu.
 
+	V budoucnu bych chtěl do aplikace přidat možnost vytváření vlastních API tokenů, rozšířit frontend a zjednodušit administraci systému pro uživatele. Zároveň bych chtěl do aplikace přidat žebříček uživatelů, možnost vytváření týmů a možnost dynamického skórování vlajek, jako to poskytuje např. systém CTFd.
+
+	Zároveň mi tato aplikace v budoucnu může posloužit jako základ pro další projekty, kde by bylo potřeba vytvářet a spravovat úlohy CTF typu a naučila mě jak pracovat v prostředí s nízkými opravněními i přes projekt na první projekt vyžadující práva vyšší.
 	
 	%% literatura
 	%\begin{thebibliography}{99}

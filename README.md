@@ -1,6 +1,3 @@
-> :warning: LaTeX dokumentace nalezitelná v podadresářích `src/` a `build/` je ve vývoji, **není** kompletní a v současné době (tj. 23. 12. 2024) by neměla být považována za oficiální dokumentaci tohoto projektu, ale pouze jakožto náčrt konečné dokumentace.
-
-
 # Dokumentace
 Tento ročníkový projekt si klade za úkol umožnit studentům zapínat kyberbezpečnostní úkoly formátu CTF na školní infrastruktuře pomocí systému Kubernetes.
 
