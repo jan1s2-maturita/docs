@@ -356,6 +356,17 @@ Hlavní motivací bylo pochopení funkce a komunikace v rámci aplikací s form�
 
 Zvláštní zaměření bylo na backendovou část API a na zabezpečení celého systému.
 
+\chapter{Problematika efektivního hostovaní CTF systému}
+CTF (Capture The Flag) je forma soutěže a interaktivního vzdělávání, kde se účastníci snaží získat co nejvíce vlajek (flag) z různých úloh. Obvykle se jedná o úlohy z oblasti kybernetické bezpečnosti, ale mohou být i z jiných oblastí jako např. programování, matematika, atd. Já jsem se ve svém projektu rozhodl zkusit vytvořit funkční CTF systém spustitelný na školní instanci Kubernetes. 
+
+Obvykle se při tvorbě takových systémů brzy narazí na problémy s bezpečností samotného systému vzhledem k tomu, že se jedná o systém, který musí mít alespoň omezený přístup k jinému systému kde může spouštět kontejnery, tím pádem musí zajistit, že tento systém nelze v případě úspěšného útoku na administrátorský účet zneužít na eskalaci práv na samotný hostitelský cluster. Toto je obvykle zajištěno využitím již existujících cloudových hosting platforem (např. Amazon AWS EC2), ale v tomto projektu jsem se rozhodl pokusit o řešení tzv. on-prem nasazení, kde tento kód využívá čistě již vytvořených zdrojů bez automatického provizování nových od cloudového poskytovatele, což znatelně zvyšuje komplexitu celého systému, ale zároveň snižuje riziko nečekaných nákladů kvůli opomenutým cloudovým strojům, které jsou obvykle placeny nejen za minutu provozu, ale i za přenos dat, což se může u některých typů úloh stát velmi drahým kvůli množství paketů, které se musí přenést. 
+
+Avšak, on-prem řešení má problémy s určitými požadavky - např. může být problém zajistit přístup ke kontejnerům, který je jinak obvykle řešen buď přímým přístupem přes přiřazenou IP adresu, VPN nebo přes službou poskytnutý "Attack Box," což je samostatný kontejner s nástroji pro účastníky, který je připojen k interní síti a může být použit pro útoky na úlohy. Přístup k tomuto boxu je obvykle řešen přes webový prohlížeč. Dalším problémem je zabezpečení samotného systému, kde je nutné zajistit, aby účastníci nemohli získat přístup k jiným účastníkům nebo k samotnému hostitelskému systému. 
+
+\section{Využití v praxi}
+Nejčastěji se CTF systémy využívají pro vzdělávání a trénování v oblasti kybernetické bezpečnosti, kde se účastníci snaží získat co nejvíce vlajek (flag) z různých úloh. Toto je obvykle prováděno v rámci škol nebo na veřejných soutěžích, kde se účastníci snaží získat co nejvíce bodů za úspěšné řešení úloh, čímž lze přitáhnout nové talenty do oblasti kybernetické bezpečnosti. Zároveň jsou CTF soutěže ideální formou vzdělávání hrou, jelikož účastníci se učí nové věci formou hry, což je obvykle mnohem efektivnější než tradiční vzdělávání.
+
+
 %Tipy k psaní úvodu
 %Je povinný, nadpis neměňte, rozsah - max. 1 strana. 
 %Tato část práce obsahuje: 
