@@ -369,7 +369,9 @@ Nejčastěji se CTF systémy využívají pro vzdělávání a trénování v ob
 Zároveň tyto platformy umožňují jednoduše vytvářet nové úlohy a zároveň je možné je jednoduše škálovat, což je důležité pro velké soutěže, kde se může zúčastnit až několik tisíc účastníků. Toto je zajištěno samotnou architekturou těchto platforem, které v případě on-prem řešení nejčastěji využívají Kubernetes nebo jeho nadstavbou jako je třeba OpenShift od společnosti RedHat.
 
 \section{Cíle práce}
+Jak již bylo zmíněno v úvodu, cílem této práce bylo vytvořit funkční CTF systém spustitelný na školní instanci Kubernetes, který by byl schopen spouštět a vytvářet úlohy pro soutěže typu CTF. Zároveň bylo cílem, aby se tento software dal nasadit i v prostředí s nízkým oprávněním a aby ho šlo škálovat díky architektuře mikroslužeb. V rámci tohoto projektu jsem se rozhodl využít technologie jako FastAPI, Kubernetes a SQLAlchemy, které mi umožnily vytvořit funkční systém, který by byl schopen spouštět a vytvářet úlohy pro soutěže typu CTF. 
 
+Důležitým cílem bylo také zabezpečení celého systému, aby nedošlo k úniku dat nebo k zneužití systému k útokům na jiné účastníky nebo na samotný hostitelský systém, což bylo zajištěno využitím schopnosti mikroslužeb v tom, že každá část má přístup pouze k tomu, co potřebuje a nemá přístup k ostatním částem systému, což je důležité např. u JWT klíče, kde všechny části systému potřebují přístup k veřejnému klíči, ale k privátnímu klíči má přistup pouze služba Auth. Toto je také důvod využití algoritmu RS256 (asymetrického šifrování) místo běžnějšího algoritmu HS256 (symetrického šifrování), kde by měly všechny části přístup ke klíči, který umožňuje podepisovat JWT tokeny.
 
 %Tipy k psaní úvodu
 %Je povinný, nadpis neměňte, rozsah - max. 1 strana. 
@@ -394,9 +396,9 @@ Abych nemusel vytvářet nový systém, tak jsem se rozhodl využít Kubernetes,
 \subsubsection{vCluster}
 Vzhledem k požadavku, aby byl systém spustitelný na školní instanci Kubernetes, jsem se rozhodl využít Kubernetes vcluster, který je dostupný pro všechny studenty a zároveň je možné vytvářet nové namespace a pody, čímž se dají mnohem jednodušeji zařizovat případná práva přes RBAC systém ke kterému žáci standardně přístup nemají.
 
-VCluster je program, který umožňuje vytvářet virtuální clustery na již běžícím Kubernetes clusteru, čímž umožňuje získat uživateli "zvýšená" práva oproti standardnímu clusteru. Tento program mi umožnil vytvořit vlastní cluster, který byl dostupný pouze mně a zároveň mi umožnil vytvářet nové namespace a pody, což bylo důležité pro zajištění bezpečnosti a izolace jednotlivých úloh.
+VCluster je program, který umožňuje vytvářet virtuální clustery na již běžícím Kubernetes clusteru, čímž umožňuje získat uživateli "zvýšená" práva oproti standardnímu clusteru. Tento program mi umožnil vytvořit vlastní cluster, který byl dostupný pouze mně a zároveň mi umožnil vytvářet nové namespace a pody, což bylo důležité pro zajištění bezpečnosti a izolace jednotlivých úloh jelikož bezpečnostní arvhitektura tohoto systému očekává, že uživatelské úlohy běží na jiném clusteru než samotný systém.
 
-\subsection{FastAPI}
+\subsection{FastAPI};
 FastAPI je moderní webový framework napsaný v jazyce Python, který je založen na standardu ASGI (Asynchronous Server Gateway Interface). Tento framework je velmi rychlý a zároveň je velmi jednoduchý na použití a má velmi dobrou dokumentaci. Díky tomu jsem se rozhodl použít tento framework pro vytvoření API části tohoto projektu.
 
 Tento framework mi jednoduše umožnil psát API backend v jazyce Python a zároveň mi umožnil využívat asynchronní programování, což bylo důležité pro rychlou odezvu API.
@@ -423,36 +425,6 @@ Tento algoritmus mi umožnil zajištění bezpečnosti uživatelů a zároveň m
 
 Samotné klíče jsem ukládal do Kubernetes Secret, což mi umožnilo jednoduše měnit klíče na jednom místě bez nutnosti změn v samotných aplikacích.
 
-\subsection{Přístup k systémům}
-Kvůli nastazení jsem se rozhodl pro připojování k databázím a ke Kubernetesu používat na míru vytvořené třídy, které mi umožnily připojit se k těmto systémům a využívat funkce pro komunikaci s nimi bez nutnosti se obtěžovat s vytvářením nových připojení a zároveň mi umožnilo jednoduše měnit přístupové údaje k těmto systémům.
-
-\begin{lstlisting}[style=Python, caption=Ukázka třídy pro připojení ke Kubernetes]
-from kubernetes import client, config
-from kubernetes.utils import create_from_dict
-
-class Kubernetes:
-    def __init__(self, key, url):
-        self.configuration = client.Configuration()
-        self.configuration.api_key['authorization'] = key
-        self.configuration.api_key_prefix['authorization'] = 'Bearer'
-        self.configuration.host = url
-        self.configuration.verify_ssl = False
-        self.client = client.ApiClient(self.configuration)
-        self.v1 = client.CoreV1Api(self.client)
-    def get_k8s_config(self):
-        return self.v1
-    def create_namespace(self, name: str):
-        body = client.V1Namespace(metadata=client.V1ObjectMeta(name=name))
-        return self.v1.create_namespace(body)
-
-    def namespace_exists(self, name: str):
-        namespaces = self.v1.list_namespace()
-        for ns in namespaces.items:
-            if ns.metadata.name == name:
-                return True
-        return False
-	...
-\end{lstlisting}
 
 \section{Frontend}
 \subsection{React}
@@ -534,6 +506,27 @@ Tato služba má dva API endpointy:
 \end{itemize}
 kde základní endpoint vyžaduje JSON data s \texttt{challenge\_id} klíčem. Dále tento endpoint potřebuje přístup k tokenu.
 
+\begin{lstlisting}[style=Python, caption=Ukázka kódu pro vytvoření instance]
+@app.post("/")
+def create_instance(x_token: Annotated[str, Header()], data: Data):
+    print(f"creating instance {data}")
+    payload = None
+    try:
+        with open(PUBLIC_KEY_PATH, 'r') as f:
+            public_key = f.read()
+            payload = decode(x_token, public_key, algorithms=['RS256'])
+    except Exception as e:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    user_id = payload["sub"]
+    image_id = data.challenge_id
+    print(kube.create_in_k8s(db=db, 
+			     user_id=user_id, 
+			     challenge_id=image_id))
+    print("Redis")
+    r.create_instance(user_id=user_id, image_id=image_id)
+    return {"status": "success"}
+\end{lstlisting}
+
 \section{Deleter}
 Tato mikroslužba umožňuje vypínat (mazat) již vytvořené úkoly uživatele a to jak v Redis databázi, tak jejich instance běžící v systému Kubernetes.
 
@@ -558,12 +551,55 @@ Tato služba má dva API endpointy:
 \end{itemize}
 kde endpoint \texttt{/\{flag\_id\}} vyžaduje v těle požadavku string \texttt{flag} a token uživatele.
 
+\section{Přístup k systémům}
+Kvůli nastazení jsem se rozhodl pro připojování k databázím a ke Kubernetesu na backendu používat na míru vytvořené třídy, které mi umožnily připojit se k těmto systémům a využívat funkce pro komunikaci s nimi bez nutnosti se obtěžovat s vytvářením nových připojení a zároveň mi umožnilo jednoduše měnit přístupové údaje k těmto systémům.
+
+\begin{lstlisting}[style=Python, caption=Ukázka třídy pro připojení ke Kubernetes]
+from kubernetes import client, config
+from kubernetes.utils import create_from_dict
+
+class Kubernetes:
+    def __init__(self, key, url):
+        self.configuration = client.Configuration()
+        self.configuration.api_key['authorization'] = key
+        self.configuration.api_key_prefix['authorization'] = 'Bearer'
+        self.configuration.host = url
+        self.configuration.verify_ssl = False
+        self.client = client.ApiClient(self.configuration)
+        self.v1 = client.CoreV1Api(self.client)
+    def get_k8s_config(self):
+        return self.v1
+    def create_namespace(self, name: str):
+        body = client.V1Namespace(metadata=client.V1ObjectMeta(name=name))
+        return self.v1.create_namespace(body)
+
+    def namespace_exists(self, name: str):
+        namespaces = self.v1.list_namespace()
+        for ns in namespaces.items:
+            if ns.metadata.name == name:
+                return True
+        return False
+	...
+\end{lstlisting}
+
 \chapter{Frontend}
 Frontend část tohoto projektu je napsána v Reactu a jakožto nástroje je využíván projekt Vite. Samotná stránka funguje na bázi CSR (Client Side Rendering) a komunikuje s API popsáným v předchozí kapitole. Díky tomuto je tato stránka zároveň kódově oddělená od backendové části a může být nasazena na jiném serveru než backend a může být psána v jiném jazyce než backendová část. Frontend je napsán v JavaScriptu díky jeho jednoduchosti a rychlosti vývoje.
 
 První stránka, kterou člověk vidí, je přihlašovací formulář a navigační lišta. Po přihlášení se zobrazí stránka s úlohami, které může uživatel zapínat a vypínat. Dále je zde možnost zobrazit si informace o právě běžících úlohách a o všech dostupných úlohách.
 
 Využití Reactu umožňuje stránce být tzv. SPA (Single Page Application) a tím pádem se nemusí stránka znovu načítat při každém přechodu mezi stránkami, což zvyšuje rychlost a plynulost stránky. Zároveň díky tomuto přístupu může webový server frontendu pouze posílat statické soubory a nemusí se starat o žádnou logiku, což zvyšuje bezpečnost a snižuje nároky na server.
+
+\section{Challenges}
+Na této stránce je možné vidět všechny dostupné úlohy a zároveň je možné tyto úlohy zapínat. U každé z těchto úloh je poskytnuto ID úlohy a její název. Po kliknutí na tlačítko "Deploy" se úloha zapne a zobrazí se v sekci "Instances".
+
+\section{Instances}
+Na této stránce je možné vidět všechny právě běžící úlohy uživatele a zároveň je možné tyto úlohy vypínat. U každé z těchto úloh je poskytnuto ID úlohy.
+
+\section{Flag submit}
+Na této stránce je možné odevzdávat vlajky k jednotlivým úlohám. Po odevzdání vlajky se zobrazí zpráva, zda byla vlajka správná nebo ne. Tento přístup k odevzdávání vlajek má své výhody, ale i své problémy - výhodou je, že uživatel může pracovat na více úlohách najednou bez hledání k jaké části vlajka patří, ale zároveň to znemožňuje mít jednu vlajku na více úlohách.
+
+\section{Shutdown an instance}
+Na této stránce je možné vypínat právě běžící úlohy uživatele. Uživatel musí zadat ID úlohy, kterou chce vypnout a po kliknutí na tlačítko "Shutdown" se tato úloha vypne.
 
 \section{Administrátorská sekce}
 Sekce pro správce v tuto chvíli obsahuje tři části - vytváření nových úloh, vytváření vlajek, aktualizace uživatelů. Prostředí v administrátorské sekci je děláno tak, aby bylo intuitivní a nebyl problém s tímhle prostředím pracovat. 
@@ -602,8 +638,12 @@ kde první endpoint slouží k odeslání příkazu do kontejneru, druhý k vytv
 	Zároveň mi tato aplikace v budoucnu může posloužit jako základ pro další projekty, kde by bylo potřeba vytvářet a spravovat úlohy CTF typu a naučila mě jak pracovat v prostředí s nízkými opravněními i přes projekt na první projekt vyžadující práva vyšší.
 	
 	%% literatura
-	%\begin{thebibliography}{99}
-	%\end{thebibliography}
+	\renewcommand{\bibname}{Seznam použitých zdrojů}
+	\begin{thebibliography}{99}
+		\bibitem FastAPI \textit{FastAPI documentation} [online]. [cit. 2024-12-29]. Dostupné z: https://fastapi.tiangolo.com/
+		\bibitem Kubernetes \textit{Kubernetes documentation} [online]. [cit. 2024-12-31]. Dostupné z: https://kubernetes.io/
+		\bibitem CTFd \textit{CTFd project - inspiration} [online]. [cit. 2024-11-21]. Dostupné z: https://ctfd.io/
+	\end{thebibliography}
 	
 	%%% obrázky 
 	%\listoffigures
