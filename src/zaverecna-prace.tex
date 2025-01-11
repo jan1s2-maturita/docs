@@ -35,6 +35,7 @@ openright
 \usepackage{cmap} %% balíček zajišťující, že vytvořené PDF bude prohledávatelné a kopírovatelné
 
 \usepackage{graphicx} %% balík pro vkládání obrázků
+\graphicspath{ {./image/} } %% cesta k obrázkům
 
 \usepackage{subcaption} %% balíček pro vkládání podobrázků
 
@@ -589,17 +590,59 @@ První stránka, kterou člověk vidí, je přihlašovací formulář a navigač
 
 Využití Reactu umožňuje stránce být tzv. SPA (Single Page Application) a tím pádem se nemusí stránka znovu načítat při každém přechodu mezi stránkami, což zvyšuje rychlost a plynulost stránky. Zároveň díky tomuto přístupu může webový server frontendu pouze posílat statické soubory a nemusí se starat o žádnou logiku, což zvyšuje bezpečnost a snižuje nároky na server.
 
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\textwidth]{01-login_screen.png}
+	\caption{Přihlašovací formulář}
+	\label{fig:frontend-login}
+\end{figure}
+
 \section{Challenges}
 Na této stránce je možné vidět všechny dostupné úlohy a zároveň je možné tyto úlohy zapínat. U každé z těchto úloh je poskytnuto ID úlohy a její název. Po kliknutí na tlačítko "Deploy" se úloha zapne a zobrazí se v sekci "Instances".
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\textwidth]{02-challenges.png}
+	\caption{Seznam úloh}
+	\label{fig:frontend-challenges}
+\end{figure}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\textwidth]{03-challenges_success.png}
+	\caption{Úloha úspěšně zapnuta}
+	\label{fig:frontend-challenges-success}
+\end{figure}
 
 \section{Instances}
 Na této stránce je možné vidět všechny právě běžící úlohy uživatele a zároveň je možné tyto úlohy vypínat. U každé z těchto úloh je poskytnuto ID úlohy.
 
+%\begin{figure}[h]
+	%\centering
+	%\includegraphics[width=0.8\textwidth]{04-instances.png}
+	%\caption{Seznam běžících úloh}
+	%\label{fig:frontend-instances}
+%\end{figure}
+
 \section{Flag submit}
 Na této stránce je možné odevzdávat vlajky k jednotlivým úlohám. Po odevzdání vlajky se zobrazí zpráva, zda byla vlajka správná nebo ne. Tento přístup k odevzdávání vlajek má své výhody, ale i své problémy - výhodou je, že uživatel může pracovat na více úlohách najednou bez hledání k jaké části vlajka patří, ale zároveň to znemožňuje mít jednu vlajku na více úlohách.
 
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\textwidth]{05-flag.png}
+	\caption{Odevzdání vlajky}
+	\label{fig:frontend-flag-submit}
+\end{figure}
+
 \section{Shutdown an instance}
 Na této stránce je možné vypínat právě běžící úlohy uživatele. Uživatel musí zadat ID úlohy, kterou chce vypnout a po kliknutí na tlačítko "Shutdown" se tato úloha vypne.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\textwidth]{06-shut.png}
+	\caption{Vypnutí úlohy}
+	\label{fig:frontend-shutdown}
+\end{figure}
 
 \section{Administrátorská sekce}
 Sekce pro správce v tuto chvíli obsahuje tři části - vytváření nových úloh, vytváření vlajek, aktualizace uživatelů. Prostředí v administrátorské sekci je děláno tak, aby bylo intuitivní a nebyl problém s tímhle prostředím pracovat. 
@@ -611,6 +654,13 @@ Vytváření vlajek pouze požaduje identifikační číslo ulohy, ke které se 
 Aktualizace uživatelů umožňuje změnit uživateli práva nebo změnit heslo uživatele.
 
 Pro bezpečnost této části je využíváno parametru "admin" u JWT tokenu, který je vytvořen při přihlášení uživatele s právy administrátora. Díky tomuto je možné jednoduše ověřit, zda je uživatel oprávněn k použití této části vzhledem k tomu, že s JSON web tokeny nelze manipulovat bez privátního klíče.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\textwidth]{07-admin.png}
+	\caption{Administrátorská sekce}
+	\label{fig:frontend-admin}
+\end{figure}
 
 \section{Access box}
 Jakožto přístup k samotným úlohám je uživateli standardně poskytnut na žádost tzv. Access box, což je kontejner s image kalilinux/kali-last-release, který se nachází ve stejném namespace a tudíž ve stejné síti jakožto úlohy uživatele. 
@@ -628,6 +678,19 @@ Ke kontejneru lze přistoupit z webového prostředí, kde lze vidět terminál 
 \end{itemize}
 kde první endpoint slouží k odeslání příkazu do kontejneru, druhý k vytvoření nového kontejneru, třetí k získání logů z kontejneru a čtvrtý k zjištění stavu služby.
 
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\textwidth]{08-access.png}
+	\caption{Access box}
+	\label{fig:frontend-access}
+\end{figure}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\textwidth]{09-command.png}
+	\caption{Odeslání příkazu a logy}
+	\label{fig:frontend-command}
+\end{figure}
 
 	\chapter{Závěr}
 
@@ -636,6 +699,8 @@ kde první endpoint slouží k odeslání příkazu do kontejneru, druhý k vytv
 	V budoucnu bych chtěl do aplikace přidat možnost vytváření vlastních API tokenů, rozšířit frontend a zjednodušit administraci systému pro uživatele. Zároveň bych chtěl do aplikace přidat žebříček uživatelů, možnost vytváření týmů a možnost dynamického skórování vlajek, jako to poskytuje např. systém CTFd.
 
 	Zároveň mi tato aplikace v budoucnu může posloužit jako základ pro další projekty, kde by bylo potřeba vytvářet a spravovat úlohy CTF typu a naučila mě jak pracovat v prostředí s nízkými opravněními i přes projekt na první projekt vyžadující práva vyšší.
+
+	Zdrojový kód tohoto projektu je dostupný na mé GitHub stránce na adrese \url{https://github.com/orgs/jan1s2-maturita/repositories}.
 	
 	%% literatura
 	\renewcommand{\bibname}{Seznam použitých zdrojů}
