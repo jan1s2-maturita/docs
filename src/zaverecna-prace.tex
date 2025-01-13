@@ -400,7 +400,7 @@ Vzhledem k požadavku, aby byl systém spustitelný na školní instanci Kuberne
 
 VCluster je program, který umožňuje vytvářet virtuální clustery na již běžícím Kubernetes clusteru, čímž umožňuje získat uživateli "zvýšená" práva oproti standardnímu clusteru. Tento program mi umožnil vytvořit vlastní cluster, který byl dostupný pouze mně a zároveň mi umožnil vytvářet nové namespace a pody, což bylo důležité pro zajištění bezpečnosti a izolace jednotlivých úloh jelikož bezpečnostní arvhitektura tohoto systému očekává, že uživatelské úlohy běží na jiném clusteru než samotný systém.
 
-\subsection{FastAPI};
+\subsection{FastAPI}
 FastAPI je moderní webový framework napsaný v jazyce Python, který je založen na standardu ASGI (Asynchronous Server Gateway Interface). Tento framework je velmi rychlý a zároveň je velmi jednoduchý na použití a má velmi dobrou dokumentaci. Díky tomu jsem se rozhodl použít tento framework pro vytvoření API části tohoto projektu.
 
 Tento framework mi jednoduše umožnil psát API backend v jazyce Python a zároveň mi umožnil využívat asynchronní programování, což bylo důležité pro rychlou odezvu API.
