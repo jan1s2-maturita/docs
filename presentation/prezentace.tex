@@ -1,0 +1,351 @@
+\documentclass[notes,12pt]{beamer}
+\usetheme{Madrid}
+
+\usepackage{pifont}
+\usepackage[framemethod=TikZ]{mdframed}
+
+% multiple optional arguments
+\usepackage{xparse}
+
+% single quote
+\usepackage{textcomp}
+
+% chemie
+\usepackage{chemfig}
+\usepackage{listings}
+\usepackage[version=4]{mhchem}
+\usepackage{bohr}
+\ExplSyntaxOn
+\keys_define:nn { mhchem }
+ {
+  arrow-min-length .code:n =
+   \cs_set:Npn \__mhchem_arrow_options_minLength:n { {#1} } % default is 2em
+ }
+\ExplSyntaxOff
+\mhchemoptions{arrow-min-length=1em}
+
+\usepackage[font=scriptsize,skip=5pt]{caption}
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
+\setbeamertemplate{itemize item}{\ding{70}}
+\setbeamertemplate{itemize subitem}{\ding{81}}
+
+\graphicspath{ {images/} }
+
+\setbeamertemplate{headline}{}
+\setbeamertemplate{navigation symbols}{}
+
+% Nastavení pro Python
+\lstdefinestyle{Python}{
+	language=Python,
+	backgroundcolor=\color{white},
+	basicstyle=\ttfamily,
+	breakatwhitespace=false,
+	breaklines=false,
+	captionpos=b,
+	columns=fullflexible,
+	commentstyle=\color{mediumgray}\upshape,
+	emph={},
+	emphstyle=\color{crimson},
+	extendedchars=true,  % requires inputenc
+	fontadjust=true,
+	frame=single,
+	identifierstyle=\color{black},
+	keepspaces=true,
+	keywordstyle=\color{mediumblue},
+	keywordstyle={[2]\color{darkviolet}},
+	keywordstyle={[3]\color{royalblue}},
+	literate=%
+	{á}{{\'a}}1 {č}{{\v{c}}}1 {ď}{{\v{d}}}1 {é}{{\'e}}1 {ě}{{\v{e}}}1
+	{í}{{\'i}}1 {ň}{{\v{n}}}1 {ó}{{\'o}}1 {ř}{{\v{r}}}1 {š}{{\v{s}}}1
+	{ť}{{\v{t}}}1 {ú}{{\'u}}1 {ů}{{\r{u}}}1 {ý}{{\'y}}1 {ž}{{\v{z}}}1,		
+	numbers=left,
+	numbersep=5pt,
+	numberstyle=\tiny\color{black},
+	rulecolor=\color{black},
+	showlines=true,
+	showspaces=false,
+	showstringspaces=false,
+	showtabs=false,
+	stringstyle=\color{forestgreen},
+	tabsize=2,
+	title=\lstname,
+	upquote=true  % requires textcomp	
+}
+\NewDocumentCommand{\col}{O{0.5} m}{
+        \begin{column}{#1\textwidth}
+            #2
+        \end{column}
+}
+
+\NewDocumentCommand{\tcol}{O{0.5} m}{
+    \col[#1]{
+            \begin{itemize}
+                    #2
+            \end{itemize}
+        }
+}
+
+\NewDocumentCommand{\icol}{O{0.5} O{1} m m}{
+    \col[#1]{
+            \begin{figure}
+                \centering
+                \includegraphics[width=#2\textwidth,height=0.7\paperheight,keepaspectratio]{#3}
+                \caption{#4}
+                \label{fig:#3}
+            \end{figure}
+    }
+}
+
+% first argument is the associated text, second is the image name and the third is the image caption
+\NewDocumentCommand{\cols}{m m m}{
+    \begin{columns}
+        \tcol{#1}
+        \icol{#2}{#3}
+    \end{columns}
+}
+
+
+\begin{document}
+\title{CTF systém v Kubernetes}
+\author{Jan Stránský}
+\date{}
+
+% Title slide
+\begin{frame}[noframenumbering]
+\titlepage
+\end{frame}
+
+\begin{frame}{CTF}
+    \begin{columns}
+        \tcol{
+            \item Capture The Flag
+            \item Soutěž v IT bezpečnosti
+            \item Úkoly z různých oblastí
+            \item Moderní styl vzdělávání
+        }
+        %\icol{ctf}{CTF logo}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Proč a motivace}
+    \begin{columns}
+        \tcol[0.7]{
+            \item Naučení se pracovat s mikroslužbami
+            \item Lepší pochopení Kubernetes API
+            \item Pokus o on-prem řešení typicky cloudového problému
+            \item Inspirace
+                \begin{itemize}
+                    \item CTFd
+                    \item Soutěže Haxagon Skirmish a Kybersoutež
+                \end{itemize}
+            \item Zájem o CTF
+        }
+        \icol[0.3]{kubernetes}{Kubernetes logo}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Požadavky projektu}
+    \begin{columns}
+        \tcol{
+            \item Webové rozhraní
+            \item Úlohy spustitelné na Kubernetes
+            \item Komunikace přes webshell
+            \item REST API
+            \item Spustitelné v prostředí školního Kubernetes clusteru
+            \item Rozšiřitelnost
+            \item Stateless
+        }
+        \icol{deployments}{Deployments in Kubernetes}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Technologie}
+    \begin{columns}
+        \tcol{
+            \item React
+            \item Kubernetes
+            \item FastAPI
+            \item SQLAlchemy
+            \item JWT
+            \item Redis
+            \item Mikroslužby
+        }
+        %\icol{react}{React logo}
+    \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Databáze}
+    \begin{columns}
+        \tcol{
+            \item Hlavní = PostgreSQL
+            \item Pro aktuálně spuštěné úkoly = Redis
+        }
+        \icol{dbconnect}{Database connection}
+
+        %\icol{redis}{Redis logo}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Problémy}
+    \begin{columns}
+        \tcol{
+            \item Logy z Access boxu
+            \item Cookies
+            \item Routing mezi frontendem a backendem pomocí Ingress
+            \item Komunikace s Kubernetes
+        }
+        \icol{accessboxproblem}{Řešení problému s logy}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Backend služby}
+    \begin{columns}
+        \tcol{
+        \item Router
+        \item Auth (klíč, PostgreSQL)
+        \item Admin (k8s, PostgreSQL)
+        \item Deployer (k8s, Redis, PostgreSQL)
+        \item Lister (Redis, PostgreSQL)
+        \item Deleter (k8s, Redis)
+        \item Flag submit (PostgreSQL)
+        }
+        \icol{listerlogs}{Logy listeru}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Access box}
+    \begin{columns}
+        \tcol{
+            \item Porovnání s VPN nebo přímým přístupem
+            \item Kali Linux kontejner
+            \item Webový přístup
+            \item Přístup k úkolům
+        }
+        \icol{accessbox}{Access box}
+    \end{columns}
+\end{frame}
+
+
+\begin{frame}{Nesplněné cíle a budoucí rozšíření}
+    \begin{columns}
+        \tcol{
+            \item Dynamické skóre
+            \item Leaderboard
+            \item Seznam již vyřešených úkolů
+            \item Zobrazení bodů
+            \item Vylepšené chybové hlášky
+            \item Bezpečnostně nepředpokládat oddělený cluster pro úkoly
+            \item Ověřování Kubernetes certifikátu
+        }
+        %\icol{requirements}{Requirements logo
+    \end{columns}
+\end{frame}
+
+%\begin{frame}{Vlnově částicový dualismus}
+    %\cols{
+        %\item Základní pojem kvantové mechaniky
+        %\item Popis chování částic na mikrofyzikální úrovni
+        %\item Chování jak jako vlny, tak jako částice
+        %\item Projev u světla
+        %\item Popsatelné rovnicí \( \lambda = \frac{h}{p} \)
+    %}{doubleslit-interference}{Interference způsobená vlnovým dualismem}
+%\end{frame}
+
+%\begin{frame}{Historie}
+    %\cols{
+    %\item První spory - 17. století
+    %\item Youngův dvouštěrbinový experiment - 1801
+    %\item Rozpor mezi vědci
+    %\item Einsteinova práce u fotoelektrického jevu - 1905
+    %\item De Broglieho hypotéza - 1924
+    %}{
+        %thomas-young
+    %}{
+        %Thomas Young
+    %}
+%\end{frame}
+
+%\begin{frame}{Experimenty - Dvouštěrbinový}
+    %\cols{
+        %\item Dvouštěrbinový experiment Thomase Younga
+        %\item 1801
+        %\item Světlo posíláno skrz dvě štěrbiny
+        %\item Interferenční obrazec
+        %\item Důkaz vlnové povahy světla
+    %}{
+        %doubleslit
+    %}{
+        %Dvouštěrbinový experiment
+    %}
+%\end{frame}
+%\begin{frame}{Experimenty - Davissonův-Germerův}
+    %\cols{
+    %\item Davissonův–Germerův experiment
+        %\item 1927
+        %\item Elektrony posílany kolmo na krystal niklu
+        %\item Závislost úhlu rozptylu \(\theta\) na intenzitě rozptýleného světla
+        %\item Rozptyl zaznamenán - potvrzení de Broglieho hypotézy
+        %}{
+        %davisson-germer
+    %}{
+        %Davissonův-Germerův experiment
+    %}
+%\end{frame}
+
+%\begin{frame}{Využití}
+    %\cols{
+    %\item Fotoelektrický jev
+    %\item Uvolňování elektronů z pevných látek
+    %\item Solární panely
+    %}{
+        %photoelectric
+    %}{
+        %Využití
+    %}
+%\end{frame}
+
+%\begin{frame}{Schrödingerova rovnice}
+    %\begin{columns}
+        %\tcol{
+        %\item Nejdůležitější rovnice (\ref{eq:schrodinger}) kvantové mechaniky
+            %\item Popis vztahu mezi vlnovou funkcí částice a její energií
+            %\item Vyplývá z vlnové částicové dualismu
+            %\item Poptřeba doplnit Hamiltonián  (\ref{eq:hamiltionan})
+            %\item Potřeba doplnit dle prostředí
+            %}
+            %\col{
+                %\begin{equation} \label{eq:schrodinger}
+                    %i \hslash \frac {\partial} {\partial t} | \Psi (t)\rangle = \hat{H} | \Psi (t)\rangle 
+                %\end{equation}
+                %\begin{align*} \label{eq:hamiltionan} \numberthis
+                    %\hat{H} &= - \frac{\hslash^2} {2m} \Delta + V \\
+                    %\hat{H} &= - \frac{\hslash^2} {2m} \frac{\partial^2} {\partial x^2} + V \\
+                %\end{align*}
+            %}
+    %\end{columns}
+
+%\end{frame}
+
+%\begin{frame}{Heisenbergův princip neurčitosti}
+    %\begin{columns}
+        %\tcol{
+        %\item Formulován v roce 1927 Wernerem Heisenbergem
+        %\item Nelze měřit hybnost a polohu částice souběžně
+        %\item Podobá se dualismu - potřeba kolaps vlnové funkce - nelze měřit vlny a částice souběžně v ten samý okamžik
+        %}
+        %\col{
+            %\begin{equation} \label{eq:heisenberg}
+                %\Delta x \Delta p_x \geq \frac{\hslash}{2}
+            %\end{equation}
+        %}
+    %\end{columns}
+%\end{frame}
+
+\begin{frame}[plain,noframenumbering]{}
+    \vspace*{\fill}
+    \centering \Huge
+    \emph{Děkuji za pozornost}
+    \vfill
+\end{frame}
+
+\end{document}
