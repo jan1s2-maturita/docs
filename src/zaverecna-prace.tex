@@ -304,7 +304,7 @@ openright
 %% Stránka obsahující abstrakt (anotaci)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
 
-%% Abstrakt v češtině
+%% Abstrakt v~češtině
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\noindent{\Large{\bfseries{Abstrakt}\\}}
 	\noindent Výsledkem tohoto projektu je funkční systém pro spouštění a~vytváření úloh CTF typu v~systému Kubernetes běžícím na školní síti s~dostatečnou mírou zabezpečení. Aplikace zahrnuje registraci a~přihlašování uživatelů, zapínání nových úloh a~následně jejich vypínání. Hlavní částí tohoto projektu je komunikace se systémem Kubernetes, který se využívá ve vysoce škálovaných produkčních prostředích. Uživatel s~aplikací může komunikovat skrz poskytnuté webové prostředí, ale může komunikovat i~přímo s~poskytnutou API. Dále si tento projekt klade za~cíl umožnit studentům se lépe seznámit s~určitými možnostmi v~oblasti IT formou hry (CTF) jako to dělají služby jako např. TryHackMe nebo HackTheBox.
@@ -317,7 +317,7 @@ openright
 	
 	\vspace{18pt}
 
-%% Abstrakt v angličtině
+%% Abstrakt v~angličtině
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%	
 	\noindent{\Large{\bfseries{Abstract}}}
 	
@@ -344,36 +344,36 @@ openright
 	\pagestyle{plain}
 	\chapter*{Úvod}
 %Tento příkaz vytvoří novou kapitolu s~názvem "Úvod" ve vašem dokumentu.
-%Hvězdička * u příkazu \chapter* znamená, že tato kapitola nebude mít číslo. Ve výsledném dokumentu se tedy objeví jako "Úvod" bez předcházejícího čísla kapitoly, které se obvykle zobrazuje u číslovaných kapitol.
-%Tento příkaz také znamená, že kapitola se automaticky neobjeví v obsahu, protože LaTeX standardně zahrnuje do obsahu pouze číslované kapitoly.
+%Hvězdička * u~příkazu \chapter* znamená, že tato kapitola nebude mít číslo. Ve výsledném dokumentu se tedy objeví jako "Úvod" bez předcházejícího čísla kapitoly, které se obvykle zobrazuje u~číslovaných kapitol.
+%Tento příkaz také znamená, že kapitola se automaticky neobjeví v~obsahu, protože LaTeX standardně zahrnuje do obsahu pouze číslované kapitoly.
 	\addcontentsline{toc}{chapter}{Úvod}
 %Tento příkaz ručně přidává záznam do obsahu.
 %První parametr toc označuje, že přidáváme záznam do Table of Contents (obsahu).
 %Druhý parametr chapter specifikuje úroveň záznamu. V tomto případě říkáme, že přidávaný záznam má být považován za kapitolu.
-%Třetí parametr Úvod je text, který se objeví v obsahu. V tomto případě bude v obsahu zobrazen název "Úvod".	
+%Třetí parametr Úvod je text, který se objeví v~obsahu. V tomto případě bude v~obsahu zobrazen název "Úvod".	
 
 Mým cílem v~této práci bylo sestavit škálovatelný software, který by nad prostředím Kubernetes vytvářet a~spravovat kontejnery pro soutěž typu CTF (Capture The Flag). Zároveň bylo cílem, aby se tento software dal nasadit i~v~prostředí s~nízkým oprávněním a~aby ho šlo škálovat díky architektuře mikroslužeb.
 
-Hlavní motivací bylo pochopení funkce a~komunikace v rámci aplikací s~formátem typu mikroslužeb místo monolitických aplikací a~zlepšení svých dovedností v~oblasti prostředí Kubernetes.
+Hlavní motivací bylo pochopení funkce a~komunikace v~rámci aplikací s~formátem typu mikroslužeb místo monolitických aplikací a~zlepšení svých dovedností v~oblasti prostředí Kubernetes.
 
 Zvláštní zaměření bylo na~backendovou část API a~na~zabezpečení celého systému.
 
 \chapter{Problematika efektivního hostovaní CTF systému}
-CTF (Capture The Flag) je forma soutěže a~interaktivního vzdělávání, kde se účastníci snaží získat co nejvíce vlajek (flag) z různých úloh. Obvykle se jedná o~úlohy z~oblasti kybernetické bezpečnosti, ale mohou být i~z~jiných oblastí jako např. programování, matematika, atd. Já jsem se ve~svém projektu rozhodl zkusit vytvořit funkční CTF systém spustitelný na školní instanci Kubernetes. 
+CTF (Capture The Flag) je forma soutěže a~interaktivního vzdělávání, kde se účastníci snaží získat co nejvíce vlajek (flag) z~různých úloh. Obvykle se jedná o~úlohy z~oblasti kybernetické bezpečnosti, ale mohou být i~z~jiných oblastí jako např. programování, matematika, atd. Já jsem se ve~svém projektu rozhodl zkusit vytvořit funkční CTF systém spustitelný na školní instanci Kubernetes. 
 
 Obvykle se při tvorbě takových systémů brzy narazí na problémy s~bezpečností samotného systému vzhledem k~tomu, že se jedná o~systém, který musí mít alespoň omezený přístup k~jinému systému kde může spouštět kontejnery, tím pádem musí zajistit, že tento systém nelze v~případě úspěšného útoku na administrátorský účet zneužít na eskalaci práv na samotný hostitelský cluster. Toto je obvykle zajištěno využitím již existujících cloudových hosting platforem (např. Amazon AWS EC2), ale v~tomto projektu jsem se rozhodl pokusit o~řešení tzv.~on-prem nasazení, kde tento kód využívá čistě již vytvořených zdrojů bez automatického provizování nových od~cloudového poskytovatele, což znatelně zvyšuje komplexitu celého systému, ale zároveň snižuje riziko nečekaných nákladů kvůli opomenutým cloudovým strojům, které jsou obvykle placeny nejen za minutu provozu, ale i~za~přenos dat, což se může u~některých typů úloh stát velmi drahým kvůli množství paketů, které se musí přenést. 
 
 Avšak, on-prem řešení má problémy s~určitými požadavky - např. může být problém zajistit přístup ke kontejnerům, který je jinak obvykle řešen buď přímým přístupem přes přiřazenou IP adresu, VPN nebo přes službou poskytnutý "Attack Box," což je samostatný kontejner s~nástroji pro účastníky, který je připojen k~interní síti a~může být použit pro útoky na úlohy. Přístup k~tomuto boxu je obvykle řešen přes webový prohlížeč. Dalším problémem je zabezpečení samotného systému, kde je nutné zajistit, aby účastníci nemohli získat přístup k~jiným účastníkům nebo k~samotnému hostitelskému systému. 
 
-\section{Využití v praxi}
-Nejčastěji se CTF systémy využívají pro vzdělávání a~trénování v~oblasti kybernetické bezpečnosti, kde se účastníci snaží získat co nejvíce vlajek (flag) z různých úloh. Toto je obvykle prováděno v~rámci škol nebo na veřejných soutěžích, kde se účastníci snaží získat co nejvíce bodů za úspěšné řešení úloh, čímž lze přitáhnout nové talenty do oblasti kybernetické bezpečnosti. Zároveň jsou CTF soutěže ideální formou vzdělávání hrou, jelikož účastníci se učí nové věci formou hry, což je obvykle mnohem efektivnější než tradiční vzdělávání.
+\section{Využití v~praxi}
+Nejčastěji se CTF systémy využívají pro vzdělávání a~trénování v~oblasti kybernetické bezpečnosti, kde se účastníci snaží získat co nejvíce vlajek (flag) z~různých úloh. Toto je obvykle prováděno v~rámci škol nebo na veřejných soutěžích, kde se účastníci snaží získat co nejvíce bodů za úspěšné řešení úloh, čímž lze přitáhnout nové talenty do oblasti kybernetické bezpečnosti. Zároveň jsou CTF soutěže ideální formou vzdělávání hrou, jelikož účastníci se učí nové věci formou hry, což je obvykle mnohem efektivnější než tradiční vzdělávání.
 
-Zároveň tyto platformy umožňují jednoduše vytvářet nové úlohy a~zároveň je možné je jednoduše škálovat, což je důležité pro velké soutěže, kde se může zúčastnit až několik tisíc účastníků. Toto je zajištěno samotnou architekturou těchto platforem, které v případě on-prem řešení nejčastěji využívají Kubernetes nebo jeho nadstavbou jako je třeba OpenShift od společnosti RedHat.
+Zároveň tyto platformy umožňují jednoduše vytvářet nové úlohy a~zároveň je možné je jednoduše škálovat, což je důležité pro velké soutěže, kde se může zúčastnit až několik tisíc účastníků. Toto je zajištěno samotnou architekturou těchto platforem, které v~případě on-prem řešení nejčastěji využívají Kubernetes nebo jeho nadstavbou jako je třeba OpenShift od společnosti RedHat.
 
 \section{Cíle práce}
-Jak již bylo zmíněno v úvodu, cílem této práce bylo vytvořit funkční CTF systém spustitelný na školní instanci Kubernetes, který by byl schopen spouštět a~vytvářet úlohy pro soutěže typu CTF. Zároveň bylo cílem, aby se tento software dal nasadit i~v~prostředí s~nízkým oprávněním a~aby ho šlo škálovat díky architektuře mikroslužeb. V rámci tohoto projektu jsem se rozhodl využít technologie jako FastAPI, Kubernetes a~SQLAlchemy, které mi umožnily vytvořit funkční systém, který by byl schopen spouštět a~vytvářet úlohy pro soutěže typu CTF. 
+Jak již bylo zmíněno v~úvodu, cílem této práce bylo vytvořit funkční CTF systém spustitelný na školní instanci Kubernetes, který by byl schopen spouštět a~vytvářet úlohy pro soutěže typu CTF. Zároveň bylo cílem, aby se tento software dal nasadit i~v~prostředí s~nízkým oprávněním a~aby ho šlo škálovat díky architektuře mikroslužeb. V rámci tohoto projektu jsem se rozhodl využít technologie jako FastAPI, Kubernetes a~SQLAlchemy, které mi umožnily vytvořit funkční systém, který by byl schopen spouštět a~vytvářet úlohy pro soutěže typu CTF. 
 
-Důležitým cílem bylo také zabezpečení celého systému, aby nedošlo k~úniku dat nebo k~zneužití systému k~útokům na jiné účastníky nebo na samotný hostitelský systém, což bylo zajištěno využitím schopnosti mikroslužeb v tom, že každá část má přístup pouze k~tomu, co potřebuje a~nemá přístup k~ostatním částem systému, což je důležité např. u JWT klíče, kde všechny části systému potřebují přístup k~veřejnému klíči, ale k~privátnímu klíči má přistup pouze služba Auth. Toto je také důvod využití algoritmu RS256 (asymetrického šifrování) místo běžnějšího algoritmu HS256 (symetrického šifrování), kde by měly všechny části přístup ke klíči, který umožňuje podepisovat JWT tokeny.
+Důležitým cílem bylo také zabezpečení celého systému, aby nedošlo k~úniku dat nebo k~zneužití systému k~útokům na jiné účastníky nebo na samotný hostitelský systém, což bylo zajištěno využitím schopnosti mikroslužeb v~tom, že každá část má přístup pouze k~tomu, co potřebuje a~nemá přístup k~ostatním částem systému, což je důležité např. u~JWT klíče, kde všechny části systému potřebují přístup k~veřejnému klíči, ale k~privátnímu klíči má přistup pouze služba Auth. Toto je také důvod využití algoritmu RS256 (asymetrického šifrování) místo běžnějšího algoritmu HS256 (symetrického šifrování), kde by měly všechny části přístup ke klíči, který umožňuje podepisovat JWT tokeny.
 
 %Tipy k~psaní úvodu
 %Je povinný, nadpis neměňte, rozsah - max. 1 strana. 
@@ -387,11 +387,11 @@ Důležitým cílem bylo také zabezpečení celého systému, aby nedošlo k~ú
 \section{Backend}
 
 \subsection{Kubernetes}
-Tento projekt využíval na zprovoznění a~správu samotných úloh Kubernetes. Kubernetes je open-source platforma pro orchestraci kontejnerů, která umožňuje automatizovat nasazování, škálování a~správu aplikací běžících v kontejnerech. 
+Tento projekt využíval na zprovoznění a~správu samotných úloh Kubernetes. Kubernetes je open-source platforma pro orchestraci kontejnerů, která umožňuje automatizovat nasazování, škálování a~správu aplikací běžících v~kontejnerech. 
 
 Tato platforma má zároveň plnohodnotnou REST API a~oficiální knihovnu pro jazyk Python, což např. systém Docker standardně neobsahuje. Zároveň má možnost vzdálené správy, díky čemuž se daly samotné mikroslužby jednoduše restartovat a~aktualizovat bez nutnosti přímého přístupu na server pomocí SSH nebo webového rozhraní (např. Portainer). Toto mi později pomohlo při debugování a~vývoji.
 
-Tento systém se dá v případě potřeby škálovat a~to jak na lokálních serverech, tak také na cloudu v případě, že by bylo potřeba zvýšit výkon nebo dostupnost systému.
+Tento systém se dá v~případě potřeby škálovat a~to jak na lokálních serverech, tak také na cloudu v~případě, že by bylo potřeba zvýšit výkon nebo dostupnost systému.
 
 Abych nemusel vytvářet nový systém, tak jsem se rozhodl využít Kubernetes, který běží na školní síti a~je dostupný pro všechny studenty.
 
@@ -401,9 +401,9 @@ Vzhledem k~požadavku, aby byl systém spustitelný na školní instanci Kuberne
 VCluster je program, který umožňuje vytvářet virtuální clustery na již běžícím Kubernetes clusteru, čímž umožňuje získat uživateli "zvýšená" práva oproti standardnímu clusteru. Tento program mi umožnil vytvořit vlastní cluster, který byl dostupný pouze mně a~zároveň mi umožnil vytvářet nové namespace a~pody, což bylo důležité pro zajištění bezpečnosti a~izolace jednotlivých úloh jelikož bezpečnostní arvhitektura tohoto systému očekává, že uživatelské úlohy běží na jiném clusteru než samotný systém.
 
 \subsection{FastAPI}
-FastAPI je moderní webový framework napsaný v jazyce Python, který je založen na standardu ASGI (Asynchronous Server Gateway Interface). Tento framework je velmi rychlý a~zároveň je velmi jednoduchý na použití a~má velmi dobrou dokumentaci. Díky tomu jsem se rozhodl použít tento framework pro vytvoření API části tohoto projektu.
+FastAPI je moderní webový framework napsaný v~jazyce Python, který je založen na standardu ASGI (Asynchronous Server Gateway Interface). Tento framework je velmi rychlý a~zároveň je velmi jednoduchý na použití a~má velmi dobrou dokumentaci. Díky tomu jsem se rozhodl použít tento framework pro vytvoření API části tohoto projektu.
 
-Tento framework mi jednoduše umožnil psát API backend v jazyce Python a~zároveň mi umožnil využívat asynchronní programování, což bylo důležité pro rychlou odezvu API.
+Tento framework mi jednoduše umožnil psát API backend v~jazyce Python a~zároveň mi umožnil využívat asynchronní programování, což bylo důležité pro rychlou odezvu API.
 
 Zároveň mi tento framework velmi zjednodušil zajištění čitelnosti kódu díky vynucenému využití typování a~automatickému generování dokumentace.
 
@@ -413,19 +413,19 @@ SQLAlchemy je knihovna pro jazyk Python, která umožňuje komunikaci s~relačn�
 \subsection{Redis}
 Na uchování již nastartovaných úloh jsem použil databázi Redis. Redis je open-source in-memory databáze, která je používána pro ukládání klíč-hodnota párů. Tato databáze mi umožnila ukládat informace o~běžících úlohách a~zároveň mi umožnila jednoduše získávat informace o~těchto úlohách.
 
-Redis se standardně využívá např. na ukládání cache, ale v tomto projektu jsem ho využil na ukládání informací o~běžících úlohách, jelikož je velmi rychlý a~jednoduchý na použití.
+Redis se standardně využívá např. na ukládání cache, ale v~tomto projektu jsem ho využil na ukládání informací o~běžících úlohách, jelikož je velmi rychlý a~jednoduchý na použití.
 
 \subsection{Databáze}
 Jakožto databázi jsem zvolil PostgreSQL, která je open-source relační databáze. Tato databáze mi umožnila ukládat informace o~uživatelích, úlohách a~dalších informacích, které byly potřeba pro správné fungování tohoto projektu. 
 
-Tuto databázi jsem zvolil z důvodu, že je velmi rychlá, je velmi dobře podporována knihovnou SQLAlchemy a~je vhodná pro produkční nasazení.
+Tuto databázi jsem zvolil z~důvodu, že je velmi rychlá, je velmi dobře podporována knihovnou SQLAlchemy a~je vhodná pro produkční nasazení.
 
 \subsection{JWT}
-Na autentizaci jsem použil JWT (JSON Web Token), který mi umožnil vytvářet a~ověřovat tokeny, které byly použity pro ověření uživatele v ostatních částech systému. Tento token byl podepsán pomocí privátního klíče (algoritmus RSA) a~ověřován pomocí veřejného klíče. Tyto tokeny byly ukládány do cookie a~zároveň byly přenášeny v hlavičce požadavku.
+Na autentizaci jsem použil JWT (JSON Web Token), který mi umožnil vytvářet a~ověřovat tokeny, které byly použity pro ověření uživatele v~ostatních částech systému. Tento token byl podepsán pomocí privátního klíče (algoritmus RSA) a~ověřován pomocí veřejného klíče. Tyto tokeny byly ukládány do cookie a~zároveň byly přenášeny v~hlavičce požadavku.
 
-Tento algoritmus mi umožnil zajištění bezpečnosti uživatelů a~zároveň mi umožnil jednoduché ověřování uživatelů v ostatních částech systému díky jeho bezestavové povaze.
+Tento algoritmus mi umožnil zajištění bezpečnosti uživatelů a~zároveň mi umožnil jednoduché ověřování uživatelů v~ostatních částech systému díky jeho bezestavové povaze.
 
-Samotné klíče jsem ukládal do Kubernetes Secret, což mi umožnilo jednoduše měnit klíče na jednom místě bez nutnosti změn v samotných aplikacích.
+Samotné klíče jsem ukládal do Kubernetes Secret, což mi umožnilo jednoduše měnit klíče na jednom místě bez nutnosti změn v~samotných aplikacích.
 
 
 \section{Frontend}
@@ -434,13 +434,13 @@ Na frontend jsem využil toolkit Vite a~knihovnu React. React je knihovna pro tv
 
 Využití Reactu mi umožnilo zajištění rychlé odezvy a~zároveň jednoduchého vytváření komponent, což mi zjednodušilo vytváření webového rozhraní vzhledem k~tomu, že frontend nebyl primární částí tohoto projektu.
 
-Na kód jsem využil JavaScript jelikož jsem s~ním již měl zkušenosti, které jsem postrádal u TypeScriptu.
+Na kód jsem využil JavaScript jelikož jsem s~ním již měl zkušenosti, které jsem postrádal u~TypeScriptu.
 
 \section{Ostatní části}
 \subsection{Git submodules}
-Pro sdílení modelů mezi mikroslužbami jsem využil Git Submodules, které mi umožnily sdílet kód mezi jednotlivými mikroslužbami a~zároveň mi umožnily jednoduše aktualizovat kód v jednotlivých mikroslužbách bez nutnosti hlídat aktuálnost zkopírovaného kódu.
+Pro sdílení modelů mezi mikroslužbami jsem využil Git Submodules, které mi umožnily sdílet kód mezi jednotlivými mikroslužbami a~zároveň mi umožnily jednoduše aktualizovat kód v~jednotlivých mikroslužbách bez nutnosti hlídat aktuálnost zkopírovaného kódu.
 
-Toto mi navíc umožnilo jednoduše sdílet kód mezi jednotlivými částmi systému a~zároveň mi umožnilo jednoduše měnit kód v jednotlivých částech systému.
+Toto mi navíc umožnilo jednoduše sdílet kód mezi jednotlivými částmi systému a~zároveň mi umožnilo jednoduše měnit kód v~jednotlivých částech systému.
 
 
 \chapter{Řešení backendu - mikroslužby}
@@ -448,9 +448,9 @@ Toto mi navíc umožnilo jednoduše sdílet kód mezi jednotlivými částmi sys
 \section{Úvod}
 \label{sec:uvod}
 
-V této kapitole se seznámíme s~tím, co mikroslužby jsou a~s jednotlivými mikroslužbami použitými v API částí tohoto projektu. Všechny tyto mikroslužby jsou napsány v jazyce Python s~použitím 
+V této kapitole se seznámíme s~tím, co mikroslužby jsou a~s jednotlivými mikroslužbami použitými v~API částí tohoto projektu. Všechny tyto mikroslužby jsou napsány v~jazyce Python s~použitím 
 
-Na autentizace byly použity JWT tokeny, které byly podepsány pomocí privátního klíče (algoritmus RSA) a~ověřovány pomocí veřejného klíče. Tyto tokeny byly ukládány do cookie a~zároveň byly přenášeny v hlavičce požadavku.
+Na autentizace byly použity JWT tokeny, které byly podepsány pomocí privátního klíče (algoritmus RSA) a~ověřovány pomocí veřejného klíče. Tyto tokeny byly ukládány do cookie a~zároveň byly přenášeny v~hlavičce požadavku.
 
 Tyto mikroslužby jsou:
 \begin{itemize}
@@ -463,14 +463,14 @@ Tyto mikroslužby jsou:
 \end{itemize}
 
 \section{Router}
-Tato mikroslužba je zodpovědná za směrování požadavků na správné mikroslužby a~veškeré požadavky na API putují skrz ni, díky čemuž se dá využít globální modifikace, monitorování a~logování požadavků. Kvůli tomuto účelu tato služba nepotřebuje žádné privilegované přístupy do ostatních částí systému. Jednou z částí této mikroslužby je i~zajištění přesunu JWT tokenu z cookie do hlavičky požadavku, aby se dala API používat jak z webového frontendu, tak i~z jiných aplikací.
+Tato mikroslužba je zodpovědná za směrování požadavků na správné mikroslužby a~veškeré požadavky na API putují skrz ni, díky čemuž se dá využít globální modifikace, monitorování a~logování požadavků. Kvůli tomuto účelu tato služba nepotřebuje žádné privilegované přístupy do ostatních částí systému. Jednou z~částí této mikroslužby je i~zajištění přesunu JWT tokenu z~cookie do hlavičky požadavku, aby se dala API používat jak z~webového frontendu, tak i~z jiných aplikací.
 
 Tato mikroslužba zároveň funguje jakožto filtr nevalidních typů požadavků (dále posílá pouze požadavky typu GET, POST, PUT a~DELETE, ostatní jsou zahozeny s~chybovou hláškou)
 
 \section{Auth}
-Tato mikroslužba je zodpovědná za registraci uživatele a~vytvářením jeho záznamu v databázi PostgreSQL. 
+Tato mikroslužba je zodpovědná za registraci uživatele a~vytvářením jeho záznamu v~databázi PostgreSQL. 
 
-Tato služba je jediná, která má přístup k~privátnímu klíči použivaného k~podepisování tokenů algoritmem RS256. Dále je také zodpovědná za ověření přihlašovacích údajů uživatele a~vytvoření JWT tokenu, který se následně používá pro ověření uživatele v ostatních částech systému. Tato služba má přístup k~databázi PostgreSQL.
+Tato služba je jediná, která má přístup k~privátnímu klíči použivaného k~podepisování tokenů algoritmem RS256. Dále je také zodpovědná za ověření přihlašovacích údajů uživatele a~vytvoření JWT tokenu, který se následně používá pro ověření uživatele v~ostatních částech systému. Tato služba má přístup k~databázi PostgreSQL.
 
 Tato služba má tři API endpointy:
 \begin{itemize}
@@ -478,7 +478,7 @@ Tato služba má tři API endpointy:
 	\item POST /login
 	\item GET /health
 \end{itemize}
-kde první dva slouží k~registraci a~přihlášení uživatele a~třetí slouží k~zjištění stavu služby, primárně kvůli liveness a~readiness HTTP checku v Kubernetes při chybě nebo při čekání na databázi.
+kde první dva slouží k~registraci a~přihlášení uživatele a~třetí slouží k~zjištění stavu služby, primárně kvůli liveness a~readiness HTTP checku v~Kubernetes při chybě nebo při čekání na databázi.
 
 \section{Lister}
 Účel mikroslužby Lister je umožnění uživatelům získat informace o~všech dostupných úlohách a~jejich stavech. Dále tato služba umožňuje získat data o~právě aktivních úlohách uživatele a~získání detailních informací o~těchto úlohách.
@@ -495,9 +495,9 @@ Tato služba má čtyři API endpointy:
 kde první endpoint vrací veškeré dostupné úlohy a~nepotřebuje žádné přihlášení, zatímco druhý a~třetí endpoint vrací informace o~právě běžících úkolech uživatele, tudíž vyžadují token, s~tím, že třetí vrací i~detailní informace o~tomto úkolu.
 
 \section{Deployer}
-Tato mikroslužba zajišťuje zapínání úkolů uživatele v systému Kubernetes a~zapsání informací o~této běžící službě do databáze Redis, čímž zpřístupní tato data službě Lister.
+Tato mikroslužba zajišťuje zapínání úkolů uživatele v~systému Kubernetes a~zapsání informací o~této běžící službě do databáze Redis, čímž zpřístupní tato data službě Lister.
 
-Jednotlivé úkoly jsou v Kubernetes spuštěné jakožto pody v namespace daným uživatelem, což je také jeden z důvodů užívání samostatného Kubernetes clusteru (ať už opravdového nebo vcluster) pro tyto studentské stroje - ServiceAccount  spojený s~tímto projektem musí mít jak práva na vytváření nových podů, tak vytváření nových namespace.
+Jednotlivé úkoly jsou v~Kubernetes spuštěné jakožto pody v~namespace daným uživatelem, což je také jeden z~důvodů užívání samostatného Kubernetes clusteru (ať už opravdového nebo vcluster) pro tyto studentské stroje - ServiceAccount  spojený s~tímto projektem musí mít jak práva na vytváření nových podů, tak vytváření nových namespace.
 
 Tato služba vyžaduje přístup k~Redis a~PostgreSQL databázím a~ke Kubernetes API.
 
@@ -530,7 +530,7 @@ def create_instance(x_token: Annotated[str, Header()], data: Data):
 \end{lstlisting}
 
 \section{Deleter}
-Tato mikroslužba umožňuje vypínat (mazat) již vytvořené úkoly uživatele a~to jak v Redis databázi, tak jejich instance běžící v systému Kubernetes.
+Tato mikroslužba umožňuje vypínat (mazat) již vytvořené úkoly uživatele a~to jak v~Redis databázi, tak jejich instance běžící v~systému Kubernetes.
 
 Tato služba vyžaduje přístup k~Redis databázi a~ke Kubernetes API.
 
@@ -551,7 +551,7 @@ Tato služba má dva API endpointy:
 	\item POST /{flag\_id}
 	\item GET /health
 \end{itemize}
-kde endpoint \texttt{/\{flag\_id\}} vyžaduje v těle požadavku string \texttt{flag} a~token uživatele.
+kde endpoint \texttt{/\{flag\_id\}} vyžaduje v~těle požadavku string \texttt{flag} a~token uživatele.
 
 \section{Přístup k~systémům}
 Kvůli nastazení jsem se rozhodl pro připojování k~databázím a~ke Kubernetesu na backendu používat na míru vytvořené třídy, které mi umožnily připojit se k~těmto systémům a~využívat funkce pro komunikaci s~nimi bez nutnosti se obtěžovat s~vytvářením nových připojení a~zároveň mi umožnilo jednoduše měnit přístupové údaje k~těmto systémům.
@@ -585,7 +585,7 @@ class Kubernetes:
 \end{lstlisting}
 
 \chapter{Frontend}
-Frontend část tohoto projektu je napsána v Reactu a~jakožto nástroje je využíván projekt Vite. Samotná stránka funguje na bázi CSR (Client Side Rendering) a~komunikuje s~API popsáným v předchozí kapitole. Díky tomuto je tato stránka zároveň kódově oddělená od backendové části a~může být nasazena na jiném serveru než backend a~může být psána v jiném jazyce než backendová část. Frontend je napsán v JavaScriptu díky jeho jednoduchosti a~rychlosti vývoje.
+Frontend část tohoto projektu je napsána v~Reactu a~jakožto nástroje je využíván projekt Vite. Samotná stránka funguje na bázi CSR (Client Side Rendering) a~komunikuje s~API popsáným v~předchozí kapitole. Díky tomuto je tato stránka zároveň kódově oddělená od backendové části a~může být nasazena na jiném serveru než backend a~může být psána v~jiném jazyce než backendová část. Frontend je napsán v~JavaScriptu díky jeho jednoduchosti a~rychlosti vývoje.
 
 První stránka, kterou člověk vidí, je přihlašovací formulář a~navigační lišta. Po přihlášení se zobrazí stránka s~úlohami, které může uživatel zapínat a~vypínat. Dále je zde možnost zobrazit si informace o~právě běžících úlohách a~o~všech dostupných úlohách.
 
@@ -599,7 +599,7 @@ Využití Reactu umožňuje stránce být tzv. SPA (Single Page Application) a~t
 \end{figure}
 
 \section{Challenges}
-Na této stránce je možné vidět všechny dostupné úlohy a~zároveň je možné tyto úlohy zapínat. U každé z těchto úloh je poskytnuto ID úlohy a~její název. Po kliknutí na tlačítko "Deploy" se úloha zapne a~zobrazí se v sekci "Instances".
+Na této stránce je možné vidět všechny dostupné úlohy a~zároveň je možné tyto úlohy zapínat. U každé z~těchto úloh je poskytnuto ID úlohy a~její název. Po kliknutí na tlačítko "Deploy" se úloha zapne a~zobrazí se v~sekci "Instances".
 
 \begin{figure}[h]
 	\centering
@@ -616,7 +616,7 @@ Na této stránce je možné vidět všechny dostupné úlohy a~zároveň je mo�
 \end{figure}
 
 \section{Instances}
-Na této stránce je možné vidět všechny právě běžící úlohy uživatele a~zároveň je možné tyto úlohy vypínat. U každé z těchto úloh je poskytnuto ID úlohy.
+Na této stránce je možné vidět všechny právě běžící úlohy uživatele a~zároveň je možné tyto úlohy vypínat. U každé z~těchto úloh je poskytnuto ID úlohy.
 
 %\begin{figure}[h]
 	%\centering
@@ -646,7 +646,7 @@ Na této stránce je možné vypínat právě běžící úlohy uživatele. Uži
 \end{figure}
 
 \section{Administrátorská sekce}
-Sekce pro správce v tuto chvíli obsahuje tři části - vytváření nových úloh, vytváření vlajek, aktualizace uživatelů. Prostředí v administrátorské sekci je děláno tak, aby bylo intuitivní a~nebyl problém s~tímhle prostředím pracovat. 
+Sekce pro správce v~tuto chvíli obsahuje tři části - vytváření nových úloh, vytváření vlajek, aktualizace uživatelů. Prostředí v~administrátorské sekci je děláno tak, aby bylo intuitivní a~nebyl problém s~tímhle prostředím pracovat. 
 
 Vytváření nových úloh je děláno tak, že je nutné zadat pouze název úlohy, image úlohy a~kategorii úlohy - veškeré ostatní části JSON manifestu úlohy jsou generovány na straně serveru automaticky, čímž se minimalizuje prostor na bezpečnostní chyby - není potřeba kontrolovat validitu odevzdaného JSON souboru, ale pouze těchto tří částí. 
 
@@ -654,7 +654,7 @@ Vytváření vlajek pouze požaduje identifikační číslo ulohy, ke které se 
 
 Aktualizace uživatelů umožňuje změnit uživateli práva nebo změnit heslo uživatele.
 
-Pro bezpečnost této části je využíváno parametru "admin" u JWT tokenu, který je vytvořen při přihlášení uživatele s~právy administrátora. Díky tomuto je možné jednoduše ověřit, zda je uživatel oprávněn k~použití této části vzhledem k~tomu, že s~JSON web tokeny nelze manipulovat bez privátního klíče.
+Pro bezpečnost této části je využíváno parametru "admin" u~JWT tokenu, který je vytvořen při přihlášení uživatele s~právy administrátora. Díky tomuto je možné jednoduše ověřit, zda je uživatel oprávněn k~použití této části vzhledem k~tomu, že s~JSON web tokeny nelze manipulovat bez privátního klíče.
 
 \begin{figure}[h]
 	\centering
@@ -666,18 +666,18 @@ Pro bezpečnost této části je využíváno parametru "admin" u JWT tokenu, kt
 \section{Access box}
 Jakožto přístup k~samotným úlohám je uživateli standardně poskytnut na žádost tzv. Access box, což je kontejner s~image kalilinux/kali-last-release, který se nachází ve stejném namespace a~tudíž ve stejné síti jakožto úlohy uživatele. 
 
-Toto řešení má oproti řešení pomocí VPN výhodu v tom, že není nutno instalovat žádný software na straně uživatele a~není nutno vytvářet certifikáty, popř. uživatele, tudíž je mnohem jednodušší na implementaci a~jednodušší na škálování jelikož lze tento kontejner spustit na každém nodu v Kubernetes clusteru.
+Toto řešení má oproti řešení pomocí VPN výhodu v~tom, že není nutno instalovat žádný software na straně uživatele a~není nutno vytvářet certifikáty, popř. uživatele, tudíž je mnohem jednodušší na implementaci a~jednodušší na škálování jelikož lze tento kontejner spustit na každém nodu v~Kubernetes clusteru.
 
-Použití Kali Linuxu je z důvodu, že je to jedna z nejznámějších distribucí pro pentesting a~je také jedna z nejvíce používaných distribucí pro tento účel, což umožňuje uživateli si toto prostředí vyzkoušet.
+Použití Kali Linuxu je z~důvodu, že je to jedna z~nejznámějších distribucí pro pentesting a~je také jedna z~nejvíce používaných distribucí pro tento účel, což umožňuje uživateli si toto prostředí vyzkoušet.
 
-Ke kontejneru lze přistoupit z webového prostředí, kde lze vidět terminál realizovaný pomocí REST API.
+Ke kontejneru lze přistoupit z~webového prostředí, kde lze vidět terminál realizovaný pomocí REST API.
 \begin{itemize}
 	\item POST /exec
 	\item POST /create
 	\item GET /logs
 	\item GET /health
 \end{itemize}
-kde první endpoint slouží k~odeslání příkazu do kontejneru, druhý k~vytvoření nového kontejneru, třetí k~získání logů z kontejneru a~čtvrtý k~zjištění stavu služby.
+kde první endpoint slouží k~odeslání příkazu do kontejneru, druhý k~vytvoření nového kontejneru, třetí k~získání logů z~kontejneru a~čtvrtý k~zjištění stavu služby.
 
 \begin{figure}[h]
 	\centering
@@ -695,11 +695,11 @@ kde první endpoint slouží k~odeslání příkazu do kontejneru, druhý k~vytv
 
 	\chapter{Závěr}
 
-	Celkově bych řekl, že se mi podařilo splnit veškeré cíle, které jsem si stanovil na začátku tohoto projektu. Vytvořil jsem funkční systém pro vytváření a~správu úloh CTF typu v systému Kubernetes, který je dostupný na školní síti a~je dostatečně zabezpečený. Zároveň jsem se naučil pracovat s~mikroslužbami a~s prostředím Kubernetes, což byly mé hlavní cíle tohoto projektu.
+	Celkově bych řekl, že se mi podařilo splnit veškeré cíle, které jsem si stanovil na začátku tohoto projektu. Vytvořil jsem funkční systém pro vytváření a~správu úloh CTF typu v~systému Kubernetes, který je dostupný na školní síti a~je dostatečně zabezpečený. Zároveň jsem se naučil pracovat s~mikroslužbami a~s prostředím Kubernetes, což byly mé hlavní cíle tohoto projektu.
 
 	V budoucnu bych chtěl do aplikace přidat možnost vytváření vlastních API tokenů, rozšířit frontend a~zjednodušit administraci systému pro uživatele. Zároveň bych chtěl do aplikace přidat žebříček uživatelů, možnost vytváření týmů a~možnost dynamického skórování vlajek, jako to poskytuje např. systém CTFd.
 
-	Zároveň mi tato aplikace v budoucnu může posloužit jako základ pro další projekty, kde by bylo potřeba vytvářet a~spravovat úlohy CTF typu a~naučila mě jak pracovat v prostředí s~nízkými opravněními i~přes projekt na první projekt vyžadující práva vyšší.
+	Zároveň mi tato aplikace v~budoucnu může posloužit jako základ pro další projekty, kde by bylo potřeba vytvářet a~spravovat úlohy CTF typu a~naučila mě jak pracovat v~prostředí s~nízkými opravněními i~přes projekt na první projekt vyžadující práva vyšší.
 
 	Zdrojový kód tohoto projektu je dostupný na mé GitHub stránce na adrese \url{https://github.com/orgs/jan1s2-maturita/repositories}.
 	
@@ -719,7 +719,7 @@ kde první endpoint slouží k~odeslání příkazu do kontejneru, druhý k~vytv
 	
 	\appendix %% začínají přílohy
 	
-	\titleformat{\chapter}[block]{\scshape\bfseries\LARGE}{Příloha \thechapter}{10pt}{\vspace{0pt}}[\vspace{-22pt}] %% nastavení nadpisu u příloh
+	\titleformat{\chapter}[block]{\scshape\bfseries\LARGE}{Příloha \thechapter}{10pt}{\vspace{0pt}}[\vspace{-22pt}] %% nastavení nadpisu u~příloh
 	
 	
 	%\chapter{%Příloha A 
