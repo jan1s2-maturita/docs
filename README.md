@@ -1,4 +1,8 @@
 # Dokumentace
+
+> [!NOTE]
+> Video je dostupné na adrese: https://www.youtube.com/watch?v=4HbrsjIiHMg
+
 Tento ročníkový projekt si klade za úkol umožnit studentům zapínat kyberbezpečnostní úkoly formátu CTF na školní infrastruktuře pomocí systému Kubernetes.
 
 Projekt je inspirován projekty typu TryHackMe, HackTheBox, CTFd, Haxagon, a dalšími.
